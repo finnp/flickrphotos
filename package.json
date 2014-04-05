@@ -1,0 +1,14 @@
+{
+  "name": "flickrphotos",
+  "version": "0.0.1",
+  "description": "A small module for getting image details from the flickr api",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Finn Pauls",
+  "license": "MIT",
+  "dependencies": {
+    "request": "^2.34.0"
+  }
+}
