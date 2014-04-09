@@ -1,7 +1,7 @@
 var config = require('./_config.js');
 var assert = require('assert');
 var util = require('util');
-var Flickrphotos = require('../index.js');
+var Flickrphotos = require('../index.js').Flickrphotos;
 
 var flickr = new Flickrphotos(config.api_key);
 
@@ -32,5 +32,7 @@ describe('set_endpoints', function() {
       assert.equal(photo_details.getSizes.sizes.candownload, 1);
       done();
     });
+    // cleanup
+    flickr.use_endpoints('getInfo');
   });
 });
