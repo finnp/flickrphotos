@@ -1,3 +1,4 @@
+var util = require('util');
 var querystring = require('querystring');
 var async = require('async');
 var request = require('request');
@@ -24,25 +25,26 @@ module.exports = function(flickr_api_key) {
     }
   };
 
-  return function(photo_ids, done_all) {
-    this.flickr_api_key = flickr_api_key;
-
-    async.concat(photo_ids, function(photo_id, done_photo) {
-      var endpoints = ['getInfo', 'getSizes'];
-      var photo_details_raw = {};
-      async.each(endpoints, function(endpoint, done_endpoint) {
-        var url = build_url(endpoint, photo_id);
-        request({url: url, json: true}, function(err, response, body) {
-          photo_details_raw[endpoint] = body;
-          done_endpoint(err);
-        });  
-      },
-      function(err) {
-        done_photo(err, clean_data(photo_details_raw));
+  var get_photo_details = function(photo_id, done_photo) {
+    var endpoints = ['getInfo', 'getSizes'];
+    var photo_details_raw = {};
+    async.each(endpoints, function(endpoint, done_endpoint) {
+      var url = build_url(endpoint, photo_id);
+      request({url: url, json: true}, function(err, response, body) {
+        photo_details_raw[endpoint] = body;
+        done_endpoint(err);
       });  
     },
-    function(err, photos_details) {
-      done_all(photos_details);
-    });
+    function(err) {
+      done_photo(err, clean_data(photo_details_raw));
+    });  
+  };
+
+  return function(photo_ids, done) {
+    if(util.isArray(photo_ids)) {
+      async.concat(photo_ids, get_photo_details, done);
+    } else {
+      get_photo_details(photo_ids, done)
+    }
   };
 };
