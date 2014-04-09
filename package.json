@@ -4,11 +4,16 @@
   "description": "A small module for getting image details from the flickr api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/test.js"
   },
   "author": "Finn Pauls",
   "license": "MIT",
   "dependencies": {
-    "request": "^2.34.0"
+    "request": "^2.34.0",
+    "async": "^0.7.0"
+  },
+  "devDependencies": {
+    "nock": "^0.27.3",
+    "mocha": "^1.18.2"
   }
 }
