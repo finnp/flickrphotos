@@ -6,6 +6,7 @@ var request = require('request');
 var flickr_api = "https://api.flickr.com/services/rest/";
 
 module.exports = function(flickr_api_key) {
+  var _endpoints = ['getInfo'];
 
   var build_url = function(endpoint, photo_id) {
     var request_data = {
@@ -18,17 +19,9 @@ module.exports = function(flickr_api_key) {
     return flickr_api + "?" + querystring.stringify(request_data);
   };
 
-  var clean_data = function(photo_details) {
-    return {
-      author: photo_details.getInfo.photo.owner.username,
-      sizes: photo_details.getSizes.sizes.size
-    }
-  };
-
-  var get_photo_details = function(photo_id, done_photo) {
-    var endpoints = ['getInfo', 'getSizes'];
+  this.get_photo_details = function(photo_id, done) {
     var photo_details_raw = {};
-    async.each(endpoints, function(endpoint, done_endpoint) {
+    async.each(_endpoints, function(endpoint, done_endpoint) {
       var url = build_url(endpoint, photo_id);
       request({url: url, json: true}, function(err, response, body) {
         photo_details_raw[endpoint] = body;
@@ -36,15 +29,23 @@ module.exports = function(flickr_api_key) {
       });  
     },
     function(err) {
-      done_photo(err, clean_data(photo_details_raw));
+      done(err, photo_details_raw);
     });  
   };
 
-  return function(photo_ids, done) {
-    if(util.isArray(photo_ids)) {
-      async.concat(photo_ids, get_photo_details, done);
+  this.use_endpoints = function(endpoints) {
+    if(util.isArray(endpoints)) {
+      _endpoints = endpoints;
     } else {
-      get_photo_details(photo_ids, done)
+      _endpoints = Array.prototype.slice.call(arguments);
+    }
+  };
+
+  this.get = function(photo_ids, done) {
+    if(util.isArray(photo_ids)) {
+      async.concat(photo_ids, this.get_photo_details, done);
+    } else {
+      this.get_photo_details(photo_ids, done)
     }
   };
 };
