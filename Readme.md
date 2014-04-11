@@ -18,7 +18,7 @@ flickr.get('13402819794', function(err, photo_details) {
 
 By default only the `getInfo` endpoint is used. However other photo endpoints that take the `photo_id` as a parameter can also be enabled. For an overview have a look at the [flickr API documentation](https://www.flickr.com/services/api/#api-photos), there are probably not many endpoints that match that requirement.
 ```javascript
-flickr.use_endpoints('getInfo', 'getSizes', `getPerms);
+flickr.use_endpoints('getInfo', 'getSizes', 'getPerms');
 
 flickr.get('13402819794', function(err, photo_details) {
 	console.log(photo_details.getInfo.photo.owner.username);
