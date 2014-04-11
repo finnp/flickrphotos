@@ -1,6 +1,9 @@
 {
   "name": "flickrphotos",
-  "version": "0.0.1",
+  "version": "0.0.2",
+  "bin": {
+    "flickrphotos": "cli.js"
+  },
   "description": "A small module for getting image details from the flickr api",
   "main": "index.js",
   "scripts": {
@@ -14,6 +17,15 @@
   },
   "devDependencies": {
     "nock": "^0.27.3",
-    "mocha": "^1.18.2"
-  }
+    "mocha": "^1.18.2",
+    "commander": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/finnp/flickrphotos.git"
+  },
+  "bugs": {
+    "url": "https://github.com/finnp/flickrphotos/issues"
+  },
+  "homepage": "https://github.com/finnp/flickrphotos"
 }
