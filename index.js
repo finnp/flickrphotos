@@ -95,12 +95,12 @@ Flickrstream.prototype._transform = function(chunk, encoding, done) {
 
 Flickrstream.prototype._flush = function(done) {
   var _this = this;
-  if(this.last_data) {
+  if(this._last_data) {
     this._handle_line(this._last_data, function() {
       _this.push('\n]\n');
       done();
     });
-    this.last_data = null;
+    this._last_data = null;
   } else {
     _this.push('\n]\n');
     done();

@@ -1,5 +1,6 @@
 var assert = require('assert');
 var util = require('util');
+var fs = require('fs');
 var Flickrphotos = require('../index.js').Flickrphotos;
 var Flickrstream = require('../index.js').Flickrstream;
 
@@ -63,7 +64,21 @@ describe('Flickrphotos', function() {
 });
 
 describe('Flickrstream', function() {
+
   it('should take a stream of newline seperated ids and pipe new line seperated json', function() {
-    throw new Error('No tests yet');
+    var flickrstream = new Flickrstream(api_key);
+    var contents = "";
+    flickrstream.on('data', function(data) {
+      contents += data;
+    });
+    flickrstream.on('end', function() {
+      var photo_details = JSON.parse(contents);
+      assert(util.isArray(photo_details));
+      assert.equal(photo_details.length, 3);
+      assert.equal(photo_details[0].getInfo.photo.owner.username, 'halfrain');
+    });
+    flickrstream.write('13402819794\n13715533304\n');
+    flickrstream.write('136599513');
+    flickrstream.end('44');
   });
 });
