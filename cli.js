@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 
+var program = require('commander');
 var Flickrphotos = require('./index.js').Flickrphotos;
 var Flickrstream = require('./index.js').Flickrstream;
-var program = require('commander');
+var version = require('./package.json').version;
 
 program
-  .version('0.0.2')
+  .version(version)
   .usage('[options] -k <flickrkey> <photoids ...>')
   .option('-k, --key <flickrkey>', 'A flickr api key for the request (required)')
   .option('-c, --compact', 'Prints the JSON non-formatted')
@@ -24,4 +25,3 @@ if(program.args.length === 0) {
     console.log(JSON.stringify(photo_details, null, indentation));
   });
 }
-
