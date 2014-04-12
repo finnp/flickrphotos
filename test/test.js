@@ -1,6 +1,7 @@
 var assert = require('assert');
 var util = require('util');
 var Flickrphotos = require('../index.js').Flickrphotos;
+var Flickrstream = require('../index.js').Flickrstream;
 
 var api_key = process.env.TEST_API_KEY;
 
@@ -13,9 +14,10 @@ if(!api_key) {
   console.info("> Testing with live flickr api");
 }
 
-var flickr = new Flickrphotos(api_key);
 
-describe('flickrphotos', function() {
+describe('Flickrphotos', function() {
+
+  var flickr = new Flickrphotos(api_key);
 
   it('should handle an array of ids', function(done) {
     flickr.get(['13402819794', '13715533304', '13659951344'], function(err, photo_details) {
@@ -34,19 +36,34 @@ describe('flickrphotos', function() {
       done();
     });
   });
+
+  describe('set_endpoints', function() {
+
+    it('should set the used endpoints for the upcoming calls', function(done) {
+      flickr.use_endpoints('getInfo', 'getSizes');
+      flickr.get('13402819794', function(err, photo_details) {
+        assert(!err);
+        assert.equal(photo_details.getInfo.photo.owner.username, 'halfrain');
+        assert.equal(photo_details.getSizes.sizes.candownload, 1);
+        done();
+      });
+      // cleanup
+      flickr.use_endpoints('getInfo');
+    });
+  });
+
+  describe('create_stream', function() {
+
+    it('should return a Flickstream with the correct api key', function() {
+      var flickrstream = flickr.create_stream();
+      assert(flickrstream instanceof Flickrstream);
+      assert.equal(flickrstream.api_key, api_key);
+    });
+  });
 });
 
-describe('set_endpoints', function() {
-
-  it('should set the used endpoints for the upcoming calls', function(done) {
-    flickr.use_endpoints('getInfo', 'getSizes');
-    flickr.get('13402819794', function(err, photo_details) {
-      assert(!err);
-      assert.equal(photo_details.getInfo.photo.owner.username, 'halfrain');
-      assert.equal(photo_details.getSizes.sizes.candownload, 1);
-      done();
-    });
-    // cleanup
-    flickr.use_endpoints('getInfo');
+describe('Flickrstream', function() {
+  it('should take a stream of newline seperated ids and pipe new line seperated json', function() {
+    throw new Error('No tests yet');
   });
 });

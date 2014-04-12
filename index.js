@@ -8,6 +8,7 @@ var flickr_api = "https://api.flickr.com/services/rest/";
 
 var Flickrphotos = function(flickr_api_key) {
   this._endpoints = ['getInfo'];
+  this.api_key = flickr_api_key;
 
   this.build_url = function(endpoint, photo_id) {
     var request_data = {
@@ -56,17 +57,24 @@ Flickrphotos.prototype.get_photo_details = function(photo_id, done) {
 var Flickrstream = function(api_key, options) {
   this.api_key = api_key;
   Transform.call(this, options);
+  this.push('[\n');
+  this.first_line = true;
 };
 
 util.inherits(Flickrstream, Transform);
 
 
-Flickrstream.prototype._handle_line = function(photo_id) {
+Flickrstream.prototype._handle_line = function(photo_id, done) {
   var flickr = new Flickrphotos(this.api_key);
   var _this = this;
   flickr.get(photo_id, function(err, photo_details) {
+    if(!_this.first_line) {
+      _this.push(',\n');
+    }
+    _this.first_line = false;
+    _this.push('  ');
     _this.push(JSON.stringify(photo_details));
-    _this.push('\n\r');
+    if (done) done();
   });
 };
 
@@ -78,17 +86,30 @@ Flickrstream.prototype._transform = function(chunk, encoding, done) {
   var lines = data.split('\n');
   this._last_data = lines.pop();
 
-  lines.forEach(this._handle_line.bind(this));
-  done();
+  var _this = this;
+  async.each(lines, function(photo_id, done) {
+    _this._handle_line(photo_id, done);
+  }, done);
+
 };
 
 Flickrstream.prototype._flush = function(done) {
+  var _this = this;
   if(this.last_data) {
-    this._handle_line(this._last_data);
+    this._handle_line(this._last_data, function() {
+      _this.push('\n]\n');
+      done();
+    });
     this.last_data = null;
+  } else {
+    _this.push('\n]\n');
+    done();
   }
+};
+
+Flickrphotos.prototype.create_stream = function() {
+  return new Flickrstream(this.api_key);
 };
 
 exports.Flickrphotos = Flickrphotos;
 exports.Flickrstream = Flickrstream;
-exports.Flickrphotos.prototype.create_stream = new Flickrstream();
