@@ -12,17 +12,17 @@ CLI, so you might also install it with the `-g` flag.
 
 ## Usage
 
-There is a callback-like `FlickrPhotos` as well as a Transform Stream
-`FlickrStream`available.
+Flickrphotos provides a [Transform stream](http://nodejs.org/api/stream.html#stream_class_stream_transform)
+as well as the possibility to get photo information through a callback.
 
-### FlickrPhotos
+### Get with callback
 This snippets prints the name of the author of the picture.
 ```javascript
-var Flickrphotos = require('flickrphotos').Flickrphotos;
+var Flickrphotos = require('flickrphotos');
 var flickr = new Flickrphotos(api_key);
 
-flickr.get('13402819794', function(err, photo_details) {
-	console.log(photo_details.getInfo.photo.owner.username);
+flickr.get('13402819794', function(err, photoDetails) {
+	console.log(photoDetails.getInfo.photo.owner.username);
 });
 ```
 
@@ -31,12 +31,12 @@ that take the `photo_id` as a parameter can also be enabled. For an overview
 have a look at the [flickr API documentation](https://www.flickr.com/services/api/#api-photos),
 there are probably not many endpoints that match that requirement.
 ```javascript
-flickr.use_endpoints('getInfo', 'getSizes', 'getPerms');
+flickr.useEndpoints('getInfo', 'getSizes', 'getPerms');
 
-flickr.get('13402819794', function(err, photo_details) {
-	console.log(photo_details.getInfo.photo.owner.username);
-	console.log(photo_details.getSizes.sizes[0].url);
-	console.log(photo_details.getPerms.perms.ispublic);
+flickr.get('13402819794', function(err, photoDetails) {
+	console.log(photoDetails.getInfo.photo.owner.username);
+	console.log(photoDetails.getSizes.sizes[0].url);
+	console.log(photoDetails.getPerms.perms.ispublic);
 });
 ```
 
@@ -44,38 +44,33 @@ It also allows to get information for several photos at once and return the json
 data as an unordered array.
 
 ```javascript
-flickr.get(['13402819794', '13715533304', '13659951344'], handle_photos);
+flickr.get(['13402819794', '13715533304', '13659951344'], handlePhotos);
 ```
 
-You may also create a FlickrStream from it like this:
-```javascript
-var flickr_stream = flickr.create_stream();
-```
+### Transform stream
 
-### FlickrStream
-There is also a Transform stream in `objectMode` available which reads photo ids and
-writes the response objects. The constructor takes a `FlickrPhotos` object or
-alternatively an `api_key`.
+Flickrphotos is also a Transform stream in `objectMode`, which reads photo ids and
+writes the response objects.
 ```javascript
-var Flickrstream = require('flickrphotos').Flickrstream;
-var flickrstream = new Flickrstream(api_key);
-flickrstream.write('13402819794');
-flickrstream.write('13402819794');
-flickrstream.end();
+var Flickrphotos = require('flickrphotos');
+var flickr = new Flickrphotos(apiKey);
+flickr.write('13402819794');
+flickr.write('13402819794');
+flickr.end();
 ```
 
 If you want to use text streams, I recommend using something like
-split and JSONStream like this. This is also what the CLI of this module uses.
+[split](https://www.npmjs.org/package/split) and JSONStream like this. This is also what the CLI of this module uses.
 
 ```
 var split = require('split');
 var JSONStream = require('JSONStream');
-var Flickrstream = require('flickrphotos').Flickrstream;
-var flickrstream = new Flickrstream(api_key);
+var Flickrphotos = require('flickrphotos');
+var flickr = new Flickrphotos(apiKey);
 
 fs.createWriteStream('photoids.txt')
 	.pipe(split())
-	.pipe(flickrstream)
+	.pipe(flickr)
 	.pipe(JSONStream.stringify())
 	.pipe(process.stdout);
 ```
