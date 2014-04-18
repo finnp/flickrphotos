@@ -2,8 +2,7 @@
 
 var program = require('commander');
 var split = require('split');
-var Flickrphotos = require('./index.js').Flickrphotos;
-var Flickrstream = require('./index.js').Flickrstream;
+var Flickrphotos = require('./index.js');
 var version = require('./package.json').version;
 var JSONStream = require('JSONStream');
 
@@ -17,7 +16,7 @@ program
 if (!program.key) program.help();
 
 if(program.args.length === 0) {
-  var flickr_stream = new Flickrstream(program.key);
+  var flickr_stream = new Flickrphotos(program.key);
   var to_json = JSONStream.stringify();
   process.stdin
     .pipe(split())
