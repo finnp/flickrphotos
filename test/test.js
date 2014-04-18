@@ -58,27 +58,27 @@ describe('Flickrphotos', function() {
     it('should return a Flickstream with the correct api key', function() {
       var flickrstream = flickr.create_stream();
       assert(flickrstream instanceof Flickrstream);
-      assert.equal(flickrstream.api_key, api_key);
+      assert.equal(flickrstream.flickr.api_key, api_key);
     });
   });
 });
 
 describe('Flickrstream', function() {
 
-  it('should take a stream of newline seperated ids and pipe new line seperated json', function() {
+  it('should take a stream of newline seperated ids and pipe new line seperated json', function(done) {
     var flickrstream = new Flickrstream(api_key);
-    var contents = "";
-    flickrstream.on('data', function(data) {
-      contents += data;
+    photo_details = []
+    flickrstream.on('data', function(obj) {
+      photo_details.push(obj);
     });
     flickrstream.on('end', function() {
-      var photo_details = JSON.parse(contents);
       assert(util.isArray(photo_details));
-      assert.equal(photo_details.length, 3);
+      assert.equal(photo_details.length, 2);
       assert.equal(photo_details[0].getInfo.photo.owner.username, 'halfrain');
+      done();
     });
-    flickrstream.write('13402819794\n13715533304\n');
-    flickrstream.write('136599513');
-    flickrstream.end('44');
+    flickrstream.write('13402819794');
+    flickrstream.write('13715533304');
+    flickrstream.end();
   });
 });

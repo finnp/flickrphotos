@@ -5,10 +5,14 @@ photo ids. It allows you to request several photos at once and also different
 flickr API endpoints.
 
 You can install it with `npm install flickrphotos`. It also comes with a little
-cli, so you might also install it with the `-g` flag.
+CLI, so you might also install it with the `-g` flag.
 
-## Code Examples
+## Usage
 
+There is a callback-like `FlickrPhotos` as well as a Transform Stream
+`FlickrStream`available.
+
+### FlickrPhotos
 This snippets prints the name of the author of the picture.
 ```javascript
 var Flickrphotos = require('flickrphotos').Flickrphotos;
@@ -39,12 +43,37 @@ data as an unordered array.
 ```javascript
 flickr.get(['13402819794', '13715533304', '13659951344'], handle_photos);
 ```
-There is also a Transform stream available which takes a new line seperated
-list of photoids and writes an array of json files.
+
+You may also create a FlickrStream from this:
+```javascript
+var flickr_stream = flickr.create_stream();
+```
+
+### FlickrStream
+There is also a Transform stream in `objectMode` available which reads photo ids and
+writes the response objects.
 ```javascript
 var Flickrstream = require('flickrphotos').Flickrstream;
 var flickrstream = new Flickrstream(api_key);
-fs.createWriteStream('photosids.txt').pipe(process.stdout);
+flickrstream.write('13402819794');
+flickrstream.write('13402819794');
+flickrstream.end();
+```
+
+If you want to use text streams, I recommend using something like
+split and JSONStream like this. This is also what the CLI of this module uses.
+
+```
+var split = require('split');
+var JSONStream = require('JSONStream');
+var Flickrstream = require('flickrphotos').Flickrstream;
+var flickrstream = new Flickrstream(api_key);
+
+fs.createWriteStream('photoids.txt')
+	.pipe(split())
+	.pipe(flickrstream)
+	.pipe(JSONStream.stringify())
+	.pipe(process.stdout);
 ```
 
 ## Command line usage

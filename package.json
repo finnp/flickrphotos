@@ -18,7 +18,9 @@
   "devDependencies": {
     "nock": "^0.27.3",
     "mocha": "^1.18.2",
-    "commander": "^2.2.0"
+    "commander": "^2.2.0",
+    "JSONStream": "^0.7.2",
+    "split": "^0.3.0"
   },
   "repository": {
     "type": "git",
