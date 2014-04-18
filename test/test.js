@@ -65,6 +65,15 @@ describe('Flickrphotos', function() {
 
 describe('Flickrstream', function() {
 
+  it('should accept a Flickrphotos object or a key in the constructor', function() {
+    var flickr = new Flickrphotos(api_key);
+    var flickrstream = new Flickrstream(flickr);
+    assert.equal(flickrstream.flickr, flickr);
+
+    flickrstream = new Flickrstream(api_key);
+    assert(flickrstream.flickr instanceof Flickrphotos);
+  });
+
   it('should take a stream of newline seperated ids and pipe new line seperated json', function(done) {
     var flickrstream = new Flickrstream(api_key);
     photo_details = []

@@ -7,6 +7,9 @@ flickr API endpoints.
 You can install it with `npm install flickrphotos`. It also comes with a little
 CLI, so you might also install it with the `-g` flag.
 
+**Note:** If you use this somewhere, make sure to add the exact version number in your
+`package.json` since I might radically change the API of this module in the future.
+
 ## Usage
 
 There is a callback-like `FlickrPhotos` as well as a Transform Stream
@@ -44,14 +47,15 @@ data as an unordered array.
 flickr.get(['13402819794', '13715533304', '13659951344'], handle_photos);
 ```
 
-You may also create a FlickrStream from this:
+You may also create a FlickrStream from it like this:
 ```javascript
 var flickr_stream = flickr.create_stream();
 ```
 
 ### FlickrStream
 There is also a Transform stream in `objectMode` available which reads photo ids and
-writes the response objects.
+writes the response objects. The constructor takes a `FlickrPhotos` object or
+alternatively an `api_key`.
 ```javascript
 var Flickrstream = require('flickrphotos').Flickrstream;
 var flickrstream = new Flickrstream(api_key);
@@ -76,7 +80,7 @@ fs.createWriteStream('photoids.txt')
 	.pipe(process.stdout);
 ```
 
-## Command line usage
+### Command line interface
 
 If you install the package with the `-g` flag or link it, you may use the
 `flickrphotos` command by specifying the flickr api key and the photoids.
