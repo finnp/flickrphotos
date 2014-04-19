@@ -29,5 +29,6 @@
   "bugs": {
     "url": "https://github.com/finnp/flickrphotos/issues"
   },
+  "keywords": ["flickr", "photos", "api", "stream"],
   "homepage": "https://github.com/finnp/flickrphotos"
 }
