@@ -1,4 +1,5 @@
 # flickrphotos
+[![Build Status](https://travis-ci.org/finnp/flickrphotos.svg?branch=master)](https://travis-ci.org/finnp/flickrphotos)
 
 Right now this is a simple tool for getting metadata from the flickr API for
 photo ids. It allows you to request several photos at once and also different
